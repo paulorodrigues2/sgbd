@@ -133,7 +133,40 @@
 			</p>
 			</fieldset>
 			</form>		
-<?php			
+<?php	
+
+
+if(empty($nome_inserido))
+			{
+?>			
+
+<?php	
+				back();
+				
+			}
+		else if(empty($submit))
+			{
+?>			
+
+<?php	
+				back();
+				
+			}
+			else
+			{
+
+
+
+
+
+
+
+
+
+
+
+
+
 				
 		}
 		elseif($_REQUEST['estado'] == "inserir")
@@ -147,6 +180,12 @@
 			if(empty($valor))
 			{
 ?>				
+				<p>Não introduzio o nome para o valor</p>
+<?php				
+				back();
+			}
+			elseif (empty($property_id)) {
+				?>
 				<p>Não introduzio o nome para o valor</p>
 <?php				
 				back();
