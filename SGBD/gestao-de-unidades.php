@@ -7,7 +7,7 @@
 		<p>Não tem permissão para aceder a esta página. Tem de efetuar <a href=><?php wp_loginout("gestao-de-unidades")?> </a>.</p>
 		
 		
-<script>
+/*<script>
 function validateForm() {
     var x = document.forms["gestao_de_unidades"]["name"].value;
     if (x == null || x == "" || x.search(/^[A-Z ]+$/i)) {
@@ -15,7 +15,7 @@ function validateForm() {
         return false;
     }
 }   
-</script>
+</script>*/
 <?php         
 	}
 	else
@@ -86,12 +86,21 @@ function validateForm() {
 			<h3><b>Gestao de unidades - Insercao</b></h3>
 <?php
 			$nome_inserido = mysqli_real_escape_string($link, $_REQUEST['nome']);
+			$submit = mysqli_real_escape_string($link, $_REQUEST['submit']);
 			
 			if(empty($nome_inserido))
 			{
 ?>			
 
-<?php			validateForm();
+<?php	
+				back();
+				
+			}
+		else if(empty($submit))
+			{
+?>			
+
+<?php	
 				back();
 				
 			}
