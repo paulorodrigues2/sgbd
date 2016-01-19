@@ -189,10 +189,6 @@
 
 
 
-
-	    }
-
-
 	    	if(empty($form_id))
 			{
 ?>			
@@ -247,4 +243,5 @@ if($result_insert_value)
 	}
 
 
+				}
 		}
