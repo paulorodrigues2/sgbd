@@ -40,10 +40,11 @@
 			
 					while($row_component_comp_type = mysqli_fetch_array($result_comp_type))
 					{
-						$query_componentes_final = "SELECT component.id, component.name, component.state 
-												FROM component, comp_type 
-												WHERE component.comp_type_id = ".$row_component_comp_type["id"]."
-												GROUP BY component.id";
+						
+						$query_componentes_final = "SELECT c.id, c.name, c.state
+												FROM component AS c
+												WHERE c.comp_type_id = ".$row_component_comp_type["id"]."
+												GROUP BY c.id";
 														
 						$result_componentes_final = mysqli_query($link, $query_componentes_final);
 				
@@ -53,17 +54,15 @@
 						if($rows_componentes > 0)
 						{
 ?>						 
-							<tr
+							<tr>
 							 <td colspan = "1" rowspan = "<?php echo $rows_componentes; ?>"> <?php echo $row_component_comp_type["name"]; ?> </td>
-
 <?php						
 							while($array_componentes_final = mysqli_fetch_array($result_componentes_final))
 							{
 ?>
 								<td> <?php echo $array_componentes_final["id"] ?></td>
-								<td> <td><?php echo '<a href = "gestao-de-componentes?estado=introducao&propriedade='. $array_componentes_final["id"].'">'.$array_componentes_final["name"].'</a>';?></td>
-					
-<?php
+								<td><?php echo '<a href = "gestao-de-componentes?estado=introducao&propriedade='. $array_componentes_final["id"].'">'.$array_componentes_final["name"].'</a>';?></td>
+<?php						
 								if($array_componentes_final["state"] == "active")
 								{
 ?>							
@@ -166,8 +165,8 @@
 			}
 			else
 			{
-				//Começa a transição apenas de escrita(inserção de valores) Returns TRUE on success or FALSE on failure.
-				mysqli_begin_transaction($link, MYSQLI_TRANS_START_READ_WRITE);
+				
+				
 				$query_insert_string = sprintf('INSERT INTO `component` (`name`, `comp_type_id`, `state`) VALUES ("%s", "%s", "%s");',
 				mysqli_real_escape_string($link, $component_name),
 				mysqli_real_escape_string($link, $comp_type), 
