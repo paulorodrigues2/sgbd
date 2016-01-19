@@ -29,7 +29,8 @@ function validateForm() {
 			else
 			{		
 ?>
-				<table>
+				
+				<table class="mytable">
 				 <tr>
 				  <th>id</th>
 				  <th>unidade</th>

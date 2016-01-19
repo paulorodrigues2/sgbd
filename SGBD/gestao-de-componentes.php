@@ -21,7 +21,7 @@
 			else
 			{
 ?>			
-				<table>
+				<table class="mytable">
 				 <thead>
 				  <tr>
 				   <th>tipo</th>
@@ -86,9 +86,9 @@
 				</table>			
 <?php					
 			}
-			/*}		
+			}		
 		elseif($_REQUEST["estado"] == "introducao")
-		{*/
+		
 ?>			
 			<h3><b>Gestao de componentes - Introducao<b></h3>
 			
@@ -164,14 +164,16 @@
 			}
 			else
 			{
-			
+				//Começa a transição apenas de escrita(inserção de valores) Returns TRUE on success or FALSE on failure.
+				mysqli_begin_transaction($link, MYSQLI_TRANS_START_READ_WRITE);
 				$query_insert_string = sprintf('INSERT INTO `component` (`name`, `comp_type_id`, `state`) VALUES ("%s", "%s", "%s");',
 				mysqli_real_escape_string($link, $component_name),
 				mysqli_real_escape_string($link, $comp_type), 
 				mysqli_real_escape_string($link, $component_state));
 			
 				$result_insert = mysqli_query($link, $query_insert_string);
-			
+				//Transição feita com sucesso.
+				mysqli_commit($link);
 ?>
 				<p>Inseriu os dados de novo componente com sucesso.</p>
 				<p>Clique em <a href="gestao-de-componentes">Continuar</a> para avancar.</p><br>
