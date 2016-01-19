@@ -31,7 +31,7 @@
 ?>
 						<tr>
 						 <td> <?php echo $linha['id']; ?> </td>
-						 <td> <?php echo $linha['name']; ?> </td>
+						<td><?php echo '<a href = "gestao-de-unidades?estado=introducao&unidade='. $linha["id"].'">'.$linha['name'].'</a>';?></td>
 						</tr>
 <?php 
 					} 
