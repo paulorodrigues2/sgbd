@@ -107,9 +107,13 @@ function validateForm() {
 			else
 			{
 						
+				//Começa a transição apenas de escrita(inserção de valores) Returns TRUE on success or FALSE on failure.
+				mysqli_begin_transaction($link, MYSQLI_TRANS_START_READ_WRITE);
 				
 			$inserir_unidade ="INSERT INTO prop_unit_type (name) VALUES ('$nome_inserido')";
 			$resultado_inserido = mysqli_query($link, $inserir_unidade);
+			//Transição feita com sucesso.
+				mysqli_commit($link);
 ?>
 				<p>Inseriu os dados de novo tipo de unidade com sucesso.</p>
 				<p>Clique em <a href="gestao-de-unidades">Continuar</a> para avancar.</p>

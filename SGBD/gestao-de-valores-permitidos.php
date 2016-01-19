@@ -133,41 +133,7 @@
 			</p>
 			</fieldset>
 			</form>		
-<?php	
-
-
-if(empty($nome_inserido))
-			{
-?>			
-
-<?php	
-				back();
-				
-			}
-		else if(empty($submit))
-			{
-?>			
-
-<?php	
-				back();
-				
-			}
-			else
-			{
-
-
-
-
-
-
-
-
-
-
-
-
-
-				
+<?php					
 		}
 		elseif($_REQUEST['estado'] == "inserir")
 		{
@@ -192,12 +158,16 @@ if(empty($nome_inserido))
 			}
 			else
 			{
+				//Começa a transição apenas de escrita(inserção de valores) Returns TRUE on success or FALSE on failure.
+				mysqli_begin_transaction($link, MYSQLI_TRANS_START_READ_WRITE);
 				$inserir = sprintf('INSERT INTO `prop_allowed_value` (`property_id`, `value`, `state`)
 								VALUES ("%s", "%s", "%s");',
 						mysqli_real_escape_string($link, $property_id),
 						mysqli_real_escape_string($link,$valor),
 						mysqli_real_escape_string($link, $state));				
 				$query_insere = mysqli_query($link, $inserir);
+				//Transição feita com sucesso.
+				mysqli_commit($link);
 				
 				if(mysqli_query($link, $inserir))
 				{
