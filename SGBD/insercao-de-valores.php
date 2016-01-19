@@ -92,7 +92,7 @@
 		if(isset($_REQUEST['comp']))
 		{
 			$_SESSION['comp_id'] = $_REQUEST['comp'];
-			$comp_id = mysqli_real_escape_string($_SESSION['comp_id']);
+			$comp_id = mysqli_real_escape_string($link, $_SESSION['comp_id']);
 
 			$sql_query_componente_nome = "SELECT comp.name as component_name 
 			from component as comp 
@@ -112,7 +112,7 @@
 			$sql_query_componente_tipo_resultado_array = mysqli_fetch_array($sql_query_componente_tipo_resultado);
 
 			$_SESSION['comp_type_id'] = $sql_query_componente_tipo_resultado_array['component_type_id'];
-			$component_type_id = mysqli_real_escape_string($_SESSION['comp_type_id']);
+			$component_type_id = mysqli_real_escape_string($link, $_SESSION['comp_type_id']);
 ?>			
 			<h3><b><center>Insercao de valores - <?php echo $comp_name; ?></center></b></h3>		
 			<br>
@@ -120,6 +120,10 @@
 			$nome_form_concatenacao = "comp_type_".$component_type_id."_comp_".$comp_id;
 
 ?>		
+
+
+
+
 			<form 
 				name = "<?php echo $nome_form_concatenacao?>" 
 				action="?state=validar&comp=<?php echo $comp_id;?>"
@@ -138,21 +142,14 @@
 			$sql_query_propriedades_associadas_componente_resultado = mysqli_query($link, $sql_query_propriedades_associadas_componente);
 			$sql_query_propriedades_associadas_componente_resultado_array = mysqli_fetch_array($sql_query_propriedades_associadas_componente_resultado);  			
 			
-			
-
-
-
-
-?>
-
-<?php 
+		<?php 
 
 		}
 
 	    else if(isset($_REQUEST['form']))
 	    {
         	$_SESSION['form_id'] = $_REQUEST['form'];  	
-			$form_id = mysqli_real_escape_string($_SESSION['form_id']); 
+			$form_id = mysqli_real_escape_string($link, $_SESSION['form_id']); 
 
 			$sql_query_formulario_nome = "SELECT custom_f.name as custom_form_name
 			from custom_form as custom_f 
@@ -162,7 +159,7 @@
 			$sql_query_formulario_nome_resultado_array = mysqli_fetch_array($sql_query_formulario_nome_resultado);
 
 			$_SESSION['from_name'] = $sql_query_formulario_nome_resultado_array ['custom_form_name'];
-			$from_name = mysqli_real_escape_string($_SESSION['from_name']);
+			$from_name = mysqli_real_escape_string($link, $_SESSION['from_name']);
 
 ?>
 			<br>
@@ -190,11 +187,63 @@
 			$sql_query_propriedades_associadas_formulario_resultado = mysqli_query($link,$sql_query_propriedades_associadas_formulario);
 			$sql_query_propriedades_associadas_formulario_resultado_array = mysqli_fetch_array($sql_query_propriedades_associadas_formulario_resultado);
 
-	    } 	
-		
+
+
+
+	    }
+
+
+	    	if(empty($form_id))
+			{
+?>			
+
+<?php	
+				back();
+				
+			}
+		else if(empty($comp_id))
+		{
+<?php
+
+				back();
+
+		}
+		else if(empty($from_name))
+			{
+?>			
+
+<?php	
+				back();
+				
+			}
+			else
+			{ 	
+		//Falta corrigir a inserção de valores //
+$property_id = $array_property_component['id'];
+
+		$insert_value = sprintf(" INSERT INTO value (`comp_inst_id`, `property_id`, `value`, `date`, `time`, `producer`) 
+
+																	VALUES ('%s', '%s', '%s', '%s', '%s', '%s'); ",
+																	mysql_real_escape_string('NULL'), // comp_inst_id devia ser NULL
+																	mysql_real_escape_string($property_id),
+																	mysql_real_escape_string($valor),
+																	mysql_real_escape_string($date),
+																	mysql_real_escape_string($time),
+																	mysql_real_escape_string($producer));
+																	
+							$result_insert_value = mysql_query($insert_value);
 
       
-
+if($result_insert_value)
+				{
+?>				
+					<p>Inseriu o(s) valor(es) com sucesso.</p>
+				
+					<p>
+					Clique em <a href = "insercao-de-valores"> Voltar</a>  para voltar ao início da inserção de 
+					valores e poder escolher outro formulário customizado ou em <a href = "insercao-de-valores?estado=introducao&form=<?php echo $s_form_id; ?>" > 
+					Continuar a inserir valores neste formulário customizado </a>se quiser continuar a inserir valores;
+					</p>
 	}
 
 
