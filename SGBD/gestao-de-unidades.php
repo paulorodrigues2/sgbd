@@ -37,11 +37,10 @@
 					} 
 ?>
 				</table>
-<?php				//inserção de um novo tipo de unidade
-			} 
-
+<?php				
+			}
 		}				
-		if($_GET['estado'] == "introducao")
+		elseif($_GET['estado'] == "introducao")
 		{
 			
 ?>		
@@ -60,7 +59,7 @@
 				
 				<input type="hidden" name="state" value="inserir">
 				<p>
-				<input type="submit" value="Inserir unidade"onclick="alphanumeric(document.form1.text1)">
+				<input type="submit" value="Inserir unidade">
 				</p>
 			    
 				</fieldset>

@@ -53,15 +53,17 @@
 						if($rows_componentes > 0)
 						{
 ?>						 
-							<tr>
-							 <td colspan = "1" rowspan = "<?php echo $rows_componentes; ?>"> <?php echo $array_comp_type["name"]; ?> </td>
+							<tr
+							 <td colspan = "1" rowspan = "<?php echo $rows_componentes; ?>"> <?php echo $row_component_comp_type["name"]; ?> </td>
+
 <?php						
 							while($array_componentes_final = mysqli_fetch_array($result_componentes_final))
 							{
 ?>
 								<td> <?php echo $array_componentes_final["id"] ?></td>
-								<td> <?php echo $array_componentes_final["name"] ?></td>
-<?php						
+								<td> <td><?php echo '<a href = "gestao-de-componentes?estado=introducao&propriedade='. $array_componentes_final["id"].'">'.$array_componentes_final["name"].'</a>';?></td>
+					
+<?php
 								if($array_componentes_final["state"] == "active")
 								{
 ?>							
@@ -87,7 +89,7 @@
 <?php					
 			}
 			}		
-		elseif($_REQUEST["estado"] == "introducao")
+		elseif($_GET['estado'] == "introducao"){
 		
 ?>			
 			<h3><b>Gestao de componentes - Introducao<b></h3>
@@ -126,10 +128,10 @@
 			
 			</fieldset>
 			</form>		
-			
-<?php			
-		}		
-		elseif($_REQUEST["estado"] == "inserir")
+	
+	
+	<?php	}			
+		elseif($_REQUEST['estado'] == "inserir")
 		{
 ?>		
 			<h3><b>Gestao de componentes - Insercao</b></h3>
@@ -178,7 +180,7 @@
 				<p>Inseriu os dados de novo componente com sucesso.</p>
 				<p>Clique em <a href="gestao-de-componentes">Continuar</a> para avancar.</p><br>
 <?php			
-			}			
+				}			
+			}
 		}
-	}
 ?>
