@@ -6,16 +6,6 @@
 ?>
 		<p>Não tem permissão para aceder a esta página. Tem de efetuar <a href=><?php wp_loginout("gestao-de-unidades")?> </a>.</p>
 		
-		
-/*<script>
-function validateForm() {
-    var x = document.forms["gestao_de_unidades"]["name"].value;
-    if (x == null || x == "" || x.search(/^[A-Z ]+$/i)) {
-        alert("Não insira valores numericos.");
-        return false;
-    }
-}   
-</script>*/
 <?php         
 	}
 	else
@@ -124,6 +114,15 @@ function validateForm() {
 		}
 	}
 ?>
+<script>
+function validateForm() {
+    var x = document.forms["gestao_de_unidades"]["name"].value;
+    if (x == null || x == "" || x.search(/^[A-Z ]+$/i)) {
+        alert("Não insira valores numericos.");
+        return false;
+    }
+}   
+</script>
 
 
 

@@ -117,7 +117,7 @@
 ?>		
 			<h3><b>Gestão de valores permitidos - introdução</b></h3>
 			
-			<form name = "gestao de valores permitidos" method = "REQUEST">
+			<form name = "gestao de valores permitidos" onsubmit="return validateform()" method = "REQUEST">
 			
 			<fieldset>
 			<legend>Introduzir valores:</legend>
@@ -187,5 +187,14 @@
 		}
 	}
 ?>
+<script>
+function validateForm() {
+    var x = document.forms["gestao de valores permitidos"]["value_name"].value;
+    if (x == null || x == "" || x.search(/^[A-Z ]+$/i)) {
+        alert("Não insira valores numericos.");
+        return false;
+    }
+}   
+</script>
 
 
