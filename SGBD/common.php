@@ -26,3 +26,15 @@ $link = mysqli_connect(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
  
 ?>
 <?php error_reporting (E_ALL ^ E_NOTICE); ?>
+
+
+<style>
+table.sortable thead {
+    background-color:#eee;
+    color:#666666;
+    font-weight: bold;
+    cursor: default;
+}
+ 
+</style>
+<script src="sorttable.js"></script>

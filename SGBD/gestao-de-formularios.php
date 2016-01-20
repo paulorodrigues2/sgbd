@@ -555,12 +555,12 @@
 			}
 			else
 			{	
-					
+				//Faço a atualização do valor do formulário
 				$update_custom_form= " UPDATE `custom_form` SET `name` = '$nome_formulario' WHERE `id` = '$custom_form_id'";
 											
 											
 				$resultado_update = mysqli_query($update_custom_form);
-				
+				// Apago a coluna que foi actualizada
 				$apagar_custom_form = "DELETE FROM `custom_form_has_property` WHERE `custom_form_id` = "$custom_form_id" ";
 													
 				$resultado_apagar_custom_form = mysqli_query($link, $apagar_custom_form); 
@@ -568,35 +568,40 @@
 				//Vai percorrer o array da checkbox e verifica o indice do valor escolhido 
 				foreach($check as $chave => $valor)  //percorre o array $check sendo $chave o indice do array e $valor os dados associados a esse indice
 				{
-					//Busca o valor do escolhido
+					//Busca o valor do escolhido 
 					$order = $_REQUEST['order_by'.$valor];
-					if(empty($order)) // Se o valor de check for vázio inserimos o id e a propriedade do id no custom_form_has_property
+					if(empty($order)) // Se o valor de ordenação não foi inserido então inserimos o id do formulario e a propriedade do id
 					{											
-						$update_property = "INSERT INTO custom_form_has_property (`custom_form_id`,`property_id`) 
+						$update_property_has_no_order = "INSERT INTO custom_form_has_property (`custom_form_id`,`property_id`) 
 																	VALUES ("$custom_form_id", "$valor")";
 																	
 																	
-						$result_update_cf_has_property = mysqli_query($update_cf_has_property);
+						$result_update_property_has_no_order = mysqli_query($link, $update_property_has_no_order);
 					}
 					else
 					{
-						$update_cf_has_property = sprintf(' INSERT INTO custom_form_has_property (`custom_form_id`, `property_id`, `field_order`) 
-																	VALUES ("%s", "%s","%s"); ',
-																	mysql_real_escape_string($custom_form_id),
-																	mysql_real_escape_string($valor),
-																	mysql_real_escape_string($order));
+						$update_has_order = "INSERT INTO custom_form_has_property (`custom_form_id`, `property_id`, `field_order`) 
+																	VALUES ("$custom_form_id", "$valor","$order")";
 																	
-						$result_update_cf_has_property = mysql_query($update_cf_has_property);																	
+						$result_$update_has_order = mysqli_query($link, $update_has_order);																	
 					}								
 				}
-				
-				if($result_update_cf_name && $result_update_cf_has_property && $result_clear_cf_has_property)
-				{					
+				#Se o formulário foi actualizado a sua ordem, foi actualizado sem a sua ordem  e se o resultado é apagar formulário
+				if($result_update_property_has_no_order && $result_$update_has_order && $resultado_apagar_custom_form)
+				{			
+					mysqli_commit($link);
 ?>
 					<p> Os dados do formulário customizado foram atualizados com sucesso.</p>
 					<p>Clique em <a href="gestao-de-formularios">Continuar</a> para avancar.</p>
 <?php										
-				}	
+				}
+				else{
+					
+					?>			
+					<p>Ocorreu um erro ao inserir os dados</p>
+<?php					mysqli_query('ROLLBACK');
+				back();
+				}
 			}					
 		}
 	}	
