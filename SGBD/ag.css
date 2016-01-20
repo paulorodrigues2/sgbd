@@ -1,0 +1,39 @@
+table {
+    margin: 0  !important;
+    padding: 1px !important;
+    font-size: 14px  !important;
+    text-align: center !important;
+    border-collapse: collapse !important; /* une o espaçamento entre as celulas removendo o border*/
+    border-bottom: 1px solid blue;
+    width:100%;
+}
+
+label{font-weight: bold !important;}
+
+tr:nth-child(even){background-color: #62f9ff;} /* estilo zebra-striped(duas cores) para a tabela*/
+
+th {
+    background-color: #6262ff !important;
+    color: white !important;
+    font-weight: bold !important;}
+
+h3, p {
+    font-family: "Times New Roman", Times, serif !important;
+    text-align: center !important;
+    font-weight: bold !important;
+}
+
+input[type=button], input[type=submit], input[type=reset] {
+    background-color: #327ad3;
+    border: none;
+    color: white;
+    padding: 6px 22px;
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer; /*tipo de cursor*/
+}
+
+input[type=text] {
+    padding: 5px 20px;
+    border: 2px solid green;
+}

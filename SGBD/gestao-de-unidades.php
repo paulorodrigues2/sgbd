@@ -1,7 +1,15 @@
+<!--- Permite com que este script ordene cada coluna existente.
 
-<link href="ag.css" rel="stylesheet" type="text/css" /> 
+<link rel="stylesheet"  type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css"/> 
+<script src="jquery-1.11.2.js"></script>
+<script type=text/javascript" src="//cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
 
-
+	$(document).ready(function(){
+		$('#datatable').dataTable();
+	}
+</script>
+------------------------------->
 <?php	
 	require_once("custom/php/common.php");
 	
@@ -26,11 +34,14 @@
 			{		
 ?>
 				
-				<table class="mytable" class="sortable orderNameByASC">
+				<table class="mytable" id="datatable">
+				<thead>
 				 <tr>
 				  <th>id</th>
 				  <th>unidade</th>
 				 </tr>
+				 </thead>
+				 <tbody>
 <?php	
 					while($linha = mysqli_fetch_array($res_prop_unit_type))//é guardado na variavel linha um array de resultado.
 					{
@@ -41,7 +52,7 @@
 						</tr>
 <?php 
 					} 
-?>
+?>				</tbody>
 				</table>
 <?php				
 			}
@@ -104,7 +115,7 @@
 			{
 						
 				//Começa a transição apenas de escrita(inserção de valores) Returns TRUE on success or FALSE on failure.
-				mysqli_begin_transaction($link, MYSQLI_TRANS_START_READ_WRITE);
+				//mysqli_begin_transaction($link, MYSQLI_TRANS_START_READ_WRITE);
 				
 			$inserir_unidade ="INSERT INTO prop_unit_type (name) VALUES ('$nome_inserido')";
 			$resultado_inserido = mysqli_query($link, $inserir_unidade);
@@ -119,15 +130,6 @@
 		}
 	}
 ?>
-<script>
-function validateForm() {
-    var x = document.forms["gestao_de_unidades"]["name"].value;
-    if (x == null || x == "" || x.search(/^[A-Z ]+$/i)) {
-        alert("Não insira valores numericos.");
-        return false;
-    }
-}   
-</script>
 
 
 

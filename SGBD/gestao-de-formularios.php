@@ -26,11 +26,11 @@
 			else
 			{
 			
-				$queryform = "SELECT cf.name AS 'cf.name', cf.id AS 'cf.id'
+				$queryformulario = "SELECT cf.name AS 'cf.name', cf.id AS 'cf.id'
 									FROM custom_form as cf, custom_form_has_property AS cfhp 
 									WHERE cfhp.custom_form_id = cf.id
 									GROUP BY name";
-				$resultform = mysqli_query($link, $queryform);				
+				$resultadoformulario = mysqli_query($link, $queryformulario);				
 ?>				
 				<table class="mytable">
 				<thead>
@@ -53,7 +53,7 @@
 				<tbody>
 	
 <?php	
-				while($linha = mysqli_fetch_array($resultform))
+				while($linha = mysqli_fetch_array($resultadoformulario))
 				{
 					//Seleciona id, nome, tipo de valor, nome do formulário e o tipo de formulário.
 					$queryproper = "SELECT property.*
@@ -91,7 +91,7 @@
 						{
 							$queryunidade = "SELECT put.name AS 'put.name'
 												FROM prop_unit_type AS put, property AS p
-												WHERE property.unit_type_id=prop_unit_type.id and  property.unit_type_id=".$linhapropriedade['unit_type_id']."";
+												WHERE p.unit_type_id=put.id and  p.unit_type_id=".$linhapropriedade['unit_type_id']."";
 							$result_unit_type = mysqli_query($link, $query_unit_type);
 							$linhaunidade = mysqli_fetch_array($result_unit_type);
 							#Tipo de unidade da propriedade
@@ -193,7 +193,7 @@
 					
 			<tbody>
 <?php
-		}
+
 		$query_componentes="SELECT component.name, component.id FROM component";
 		$result_componentes=mysqli_query($link, $query_componentes);
 		while($linhacomponente= mysqli_fetch_array($result_componentes)
@@ -219,11 +219,11 @@
 <?php						
 	if($linhapropriedades['unit_type_id'] != ' ' )
 						{
-			$query_unidades="SELECT put.name AS 'put.name'
+			$query_unidades2="SELECT put.name AS 'put.name'
 			FROM prop_unit_type AS put, propert AS p
 			WHERE p.unit_type_id=put.id and  p.unit_type_id=".$linhapropriedades['unit_type_id']."";
-			$resultado_unidades = mysqli_query($link, $query_unidades);
-			$array_unidades = mysqli_fetch_array($resultado_unidades);
+			$resultado_unidades2 = mysqli_query($link, $query_unidades);
+			$array_unidades2 = mysqli_fetch_array($resultado_unidades);
 ?>								
 						<td> <?php echo $array_unit_type2['put.name']; ?> </td>
 <?php						
@@ -287,9 +287,7 @@
 			</tbody>
 			</table>
 	
-			<p>	
 			<input type="submit" value="Criar formulario">
-			</p>
 			</fieldset>	
 			</form>			
 <?php			
@@ -306,7 +304,7 @@
 			if(empty($form_name))
 			{
 ?>
-				<p>Tem de escolher o nome do formulário.</p>
+				<p>Tem de escolher o nome do formulário pretendido.</p>
 <?php			
 				back();
 			}
@@ -314,14 +312,14 @@
 			elseif(is_null($check))
 			{
 ?>			
-				<p>Tem de escolher pelo menos uma propriedade.</p>
+				<p>Tem de escolher pelo menos uma propriedade pretendida.</p>
 <?php	
 				back();				
 			}
 			else
 			{	
 				
-				$inserir = sprintf('INSERT INTO custom_form ('name') VALUES("$form_name");', mysqli_real_escape_string($form_name));
+				$inserir = "INSERT INTO custom_form ('name') VALUES("$form_name")";
 				$result_inserir = mysqli_query($link, $inserir);
 				$formulario_id= mysqli_insert_id(); //Gera o último id que foi inserido
 				
@@ -410,36 +408,36 @@
 					
 			<tbody>
 <?php
-		$query_componentes2="SELECT component.name, component.id FROM component";
-		$result_componentes2=mysqli_query($link, $query_componentes2);
-		while($linhacomponente2= mysqli_fetch_array($result_componentes2)
+		$query_componentes="SELECT component.name, component.id FROM component";
+		$result_componentes=mysqli_query($link, $query_componentes);
+		while($linhacomponente= mysqli_fetch_array($result_componentes)
 		{
 
-		$query_propriedades2="SELECT property.* 
+		$query_propriedades="SELECT property.* 
 		FROM property, component
-		WHERE property.component_id=".$linhacomponente2."";
-		$result_propriedades2= mysqli_query($link, $query_propriedades2);
-		$num_rows_propriedades2=mysqli_num_rows($result_propriedades2);
+		WHERE property.component_id=".$linhacomponente."";
+		$result_propriedades= mysqli_query($link, $query_propriedades);
+		$num_rows_propriedades=mysqli_num_rows($result_propriedades);
 ?>
 		<tr>
-		<td colspan="1" rowspan="<?php echo $num_rows_propriedades?>" <?php echo $linhacomponente2['name'];?></td>
+		<td colspan="1" rowspan="<?php echo $num_rows_propriedades?>" <?php echo $linhacomponente['name'];?></td>
 <?php
-		while($linhapropriedades2 = mysqli_fetch_array($result_propriedades2)
+		while($linhapropriedades = mysqli_fetch_array($result_propriedades)
 		{
 ?>
-		<td> <?php echo $linhapropriedades2['name'];?></td>
-		<td> <?php echo $linhapropriedades2['value_type'];?></td>
-		<td> <?php echo $linhapropriedades2['form_field_name'];?></td>
-		<td> <?php echo $linhapropriedades2['form_field_type'];?></td>
-		<td> <?php echo $linhapropriedades2['form_field_type'];?></td>
+		<td> <?php echo $linhapropriedades['name'];?></td>
+		<td> <?php echo $linhapropriedades['value_type'];?></td>
+		<td> <?php echo $linhapropriedades['form_field_name'];?></td>
+		<td> <?php echo $linhapropriedades['form_field_type'];?></td>
+		<td> <?php echo $linhapropriedades['form_field_type'];?></td>
 <?php						
 	if($linhapropriedades['unit_type_id'] != ' ' )
 						{
-			$query_unidades="SELECT put.name AS 'put.name'
+			$query_unidades2="SELECT put.name AS 'put.name'
 			FROM prop_unit_type AS put, propert AS p
 			WHERE p.unit_type_id=put.id and  p.unit_type_id=".$linhapropriedades['unit_type_id']."";
-			$resultado_unidades = mysqli_query($link, $query_unidades);
-			$array_unidades = mysqli_fetch_array($resultado_unidades);
+			$resultado_unidades2 = mysqli_query($link, $query_unidades);
+			$array_unidades2 = mysqli_fetch_array($resultado_unidades);
 ?>								
 						<td> <?php echo $array_unit_type2['put.name']; ?> </td>
 <?php						
@@ -601,7 +599,7 @@
 					<p>Ocorreu um erro ao inserir os dados</p>
 <?php					mysqli_query('ROLLBACK');
 				back();
-				}
+					}	
 			}					
 		}
 	}	
