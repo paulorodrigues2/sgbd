@@ -275,7 +275,6 @@
 <?php
 					}
 ?>					<td><input type="checkbox" name="checkbox" value="<?php echo $linhapropriedades['id'];?>"></td>
-//ORDEM DO formulario ou id da propriedade?
 					<td><input type="text" name="order by_<?php /*ORDENA propriedades por id*/ echo $linhapropriedades['id'];?>"></td> 
 				
 					</tr>
@@ -296,15 +295,79 @@
 
 		}
 		elseif($_REQUEST['estado']=='inserir'){
-<php
+
+		
+		{
+			$form_name = $_REQUEST['form_name'];
+			$check= $_REQUEST['checkbox'];
 			
+			#Validações server side
+			if(empty($form_name))
+			{
 ?>
-			
-			
-			
-			
+				<p>Tem de escolher o nome do formulário.</p>
 <?php			
-		}
-	}
-	}
-?>
+				back();
+			}
+			#Validações server side
+			elseif(is_null($check))
+			{
+?>			
+				<p>Tem de escolher pelo menos uma propriedade.</p>
+<?php	
+				back();				
+			}
+			else
+			{	
+				
+				$inserir = sprintf('INSERT INTO custom_form ('name') VALUES("$form_name");', mysqli_real_escape_string($form_name));
+				$result_inserir = mysqli_query($link, $inserir);
+				$formulario_id= mysqli_insert_id(); //Gera o último id que foi inserido
+				
+				
+				foreach($check as $chave => $valor)  //percorre o array $check sendo $chave o indice do array e $valor os dados associados a esse indice
+				{
+					#Define a ordem do formulário que foi colocado no check 
+					$order = $_REQUEST['order_by'.$valor];
+					if(empty($order))
+					{
+						$inserir_id_propriedade_id = sprintf(' INSERT INTO custom_form_has_property (`custom_form_id`,`property_id`) 
+																	VALUES ("$formulario_id", "$valor"); ',
+																	mysql_real_escape_string($formulario_id),
+																	mysql_real_escape_string($valor));
+																	
+						$resultado_inserir_id_propriedade_id = mysqli_query($link, $inserir_id_propriedade_id);
+					}
+					else
+					{
+						$inserir_formulario = sprintf(' INSERT INTO custom_form_has_property ('custom_form_id', 'property_id', 'field_order') 
+																	VALUES ('$formulario_id', '$valor','$order'); ',
+																	mysql_real_escape_string($formulario_id),
+																	mysql_real_escape_string($valor),
+																	mysql_real_escape_string($order));
+																	
+						$result_inserir_formulario = mysqli_query($link, $inserir_formulario);	
+						
+					}					
+				}
+				
+				if($resultado_inserir_id_propriedade_id || $result_inserir_formulario){
+				//Transição feita com sucesso.
+				mysqli_commit($link);
+				
+?>					
+					<p>Inseriu os dados de novo formulário customizado com sucesso.</p>
+					<p>Clique em <a href="gestao-de-formularios">Continuar</a> para avancar.</p><br>
+<?php					
+						
+			}
+				else
+				{
+?>			
+					<p>Ocorreu um erro ao inserir os dados</p>
+<?php					mysqli_query('ROLLBACK');
+						back();
+				}
+		}		
+		elseif($_REQUEST['estado'] == "editar_form")
+		{
