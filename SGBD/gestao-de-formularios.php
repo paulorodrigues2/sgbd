@@ -197,8 +197,7 @@
 		$query_componentes="SELECT component.name, component.id FROM component";
 		$result_componentes=mysqli_query($link, $query_componentes);
 		while($linhacomponente= mysqli_fetch_array($result_componentes)
-		{
-
+	{
 		$query_propriedades="SELECT property.* 
 		FROM property, component
 		WHERE property.component_id=".$linhacomponente."";
@@ -216,9 +215,9 @@
 		<td> <?php echo $linhapropriedades['form_field_name'];?></td>
 		<td> <?php echo $linhapropriedades['form_field_type'];?></td>
 		<td> <?php echo $linhapropriedades['form_field_type'];?></td>
-<?php						
-	if($linhapropriedades['unit_type_id'] != ' ' )
-						{
+<?php					
+		if($linhapropriedades['unit_type_id'] != ' ' )
+	{
 			$query_unidades2="SELECT put.name AS 'put.name'
 			FROM prop_unit_type AS put, propert AS p
 			WHERE p.unit_type_id=put.id and  p.unit_type_id=".$linhapropriedades['unit_type_id']."";
@@ -227,7 +226,7 @@
 ?>								
 						<td> <?php echo $array_unit_type2['put.name']; ?> </td>
 <?php						
-					}
+	}
 					else
 					{
 ?>						
@@ -280,9 +279,9 @@
 				
 					</tr>
 <?php
-				}
 				
 			}
+		}
 ?>			
 			</tbody>
 			</table>
@@ -358,7 +357,7 @@
 					<p>Inseriu os dados de novo formulário customizado com sucesso.</p>
 					<p>Clique em <a href="gestao-de-formularios">Continuar</a> para avancar.</p><br>
 <?php					
-						
+					
 			}
 				else
 				{
@@ -367,6 +366,7 @@
 <?php					mysqli_query('ROLLBACK');
 						back();
 				}
+      		}
 		}		
 		elseif($_REQUEST['estado'] == "editar_form")
 		{
@@ -600,7 +600,8 @@
 <?php					mysqli_query('ROLLBACK');
 				back();
 					}	
-			}					
-		}
-	}	
+			}
+		}					
+	}
+}	
 ?>
