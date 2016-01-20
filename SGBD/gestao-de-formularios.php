@@ -30,7 +30,12 @@
 									FROM custom_form as cf, custom_form_has_property AS cfhp 
 									WHERE cfhp.custom_form_id = cf.id
 									GROUP BY name";
-				$resultadoformulario = mysqli_query($link, $queryformulario);				
+				$resultadoformulario = mysqli_query($link, $queryformulario);	
+
+if (!$resultadoformulario) {
+                                        die("Query #1: " . mysqli_error($link));
+                                  
+                                    }				
 ?>				
 				<table class="mytable">
 				<thead>
@@ -62,6 +67,11 @@
 									AND cfhp.custom_form_id = ".$linha['cf.id']."
 									GROUP BY id";
 					$resultproper = mysqli_query($link, $queryproper);
+					
+					if (!$resultproper ) {
+                                        die("Query #2: " . mysqli_error($link));
+                                  
+                                    }
 					$num_rows_property = mysqli_num_rows($rresultproper);
 
 ?>					
@@ -93,6 +103,12 @@
 												FROM prop_unit_type AS put, property AS p
 												WHERE p.unit_type_id=put.id and  p.unit_type_id=".$linhapropriedade['unit_type_id']."";
 							$result_unit_type = mysqli_query($link, $query_unit_type);
+							
+							if (!$result_unit_type ) {
+                                        die("Query #3: " . mysqli_error($link));
+                                  
+                                    }
+									
 							$linhaunidade = mysqli_fetch_array($result_unit_type);
 							#Tipo de unidade da propriedade
 ?>								
@@ -173,7 +189,6 @@
 			</p>
 			
 			<table>
-			<thead>
 			<tr>
 			<th>Componente</th>
 			<th>ID</th>
@@ -189,25 +204,37 @@
 			<th>escolher</th>
 			<th>ordem</th>
 			</tr>
-			</thead>
 					
-			<tbody>
+
 <?php
 
 		$query_componentes="SELECT component.name, component.id FROM component";
 		$result_componentes=mysqli_query($link, $query_componentes);
-		while($linhacomponente= mysqli_fetch_array($result_componentes)
-	{
+		
+		if (!$result_componentes ) {
+                                        die("Query #4: " . mysqli_error($link));
+                                  
+                                    }
+		
+		while($linhacomponente = mysqli_fetch_array($result_componentes))
+		{
+			
 		$query_propriedades="SELECT property.* 
 		FROM property, component
-		WHERE property.component_id=".$linhacomponente."";
+		WHERE property.component_id=".$linhacomponente['id']."";
 		$result_propriedades= mysqli_query($link, $query_propriedades);
+		
+			if (!$result_propriedades ) {
+                                        die("Query #5: " . mysqli_error($link));
+                                  
+                                    }
+									
 		$num_rows_propriedades=mysqli_num_rows($result_propriedades);
 ?>
 		<tr>
 		<td colspan="1" rowspan="<?php echo $num_rows_propriedades?>" <?php echo $linhacomponente['name'];?></td>
 <?php
-		while($linhapropriedades = mysqli_fetch_array($result_propriedades)
+		while($linhapropriedades = mysqli_fetch_array($result_propriedades))
 		{
 ?>
 		<td> <?php echo $linhapropriedades['name'];?></td>
@@ -219,10 +246,18 @@
 		if($linhapropriedades['unit_type_id'] != ' ' )
 	{
 			$query_unidades2="SELECT put.name AS 'put.name'
-			FROM prop_unit_type AS put, propert AS p
+			FROM prop_unit_type AS put, property AS p
 			WHERE p.unit_type_id=put.id and  p.unit_type_id=".$linhapropriedades['unit_type_id']."";
-			$resultado_unidades2 = mysqli_query($link, $query_unidades);
-			$array_unidades2 = mysqli_fetch_array($resultado_unidades);
+			
+			
+			
+			$resultado_unidades2 = mysqli_query($link, $query_unidades2);
+			
+			if (!$resultado_unidades2 ) {
+                                        die("Query #6: " . mysqli_error($link));
+                                  
+                                    }
+			$array_unidades2 = mysqli_fetch_array($resultado_unidades2);
 ?>								
 						<td> <?php echo $array_unit_type2['put.name']; ?> </td>
 <?php						
@@ -274,7 +309,7 @@
 						<td> inactivo </td>
 <?php
 					}
-?>					<td><input type="checkbox" name="checkbox" value="<?php echo $linhapropriedades['id'];?>"></td>
+?>					<td><input type="checkbox" name="checkbox[]" value="<?php echo $linhapropriedades['id'];?>"></td>
 					<td><input type="text" name="order by_<?php /*ORDENA propriedades por id*/ echo $linhapropriedades['id'];?>"></td> 
 				
 					</tr>
@@ -318,7 +353,7 @@
 			else
 			{	
 				
-				$inserir = "INSERT INTO custom_form ('name') VALUES("$form_name")";
+				$inserir = "INSERT INTO custom_form (name) VALUES('$form_name')";
 				$result_inserir = mysqli_query($link, $inserir);
 				$formulario_id= mysqli_insert_id(); //Gera o último id que foi inserido
 				
@@ -329,22 +364,29 @@
 					$order = $_REQUEST['order_by'.$valor];
 					if(empty($order))
 					{
-						$inserir_id_propriedade_id = sprintf(' INSERT INTO custom_form_has_property (`custom_form_id`,`property_id`) 
-																	VALUES ("$formulario_id", "$valor"); ',
-																	mysql_real_escape_string($formulario_id),
-																	mysql_real_escape_string($valor));
+						$inserir_id_propriedade_id ="INSERT INTO custom_form_has_property (custom_form_id,property_id) 
+																	VALUES ('$formulario_id', '$valor')";
+																	
 																	
 						$resultado_inserir_id_propriedade_id = mysqli_query($link, $inserir_id_propriedade_id);
+						
+						if (!$resultado_inserir_id_propriedade_id ) {
+                                        die("Query #7: " . mysqli_error($link));
+                                  
+                                    }
 					}
 					else
 					{
-						$inserir_formulario = sprintf(' INSERT INTO custom_form_has_property ('custom_form_id', 'property_id', 'field_order') 
-																	VALUES ('$formulario_id', '$valor','$order'); ',
-																	mysql_real_escape_string($formulario_id),
-																	mysql_real_escape_string($valor),
-																	mysql_real_escape_string($order));
+						$inserir_formulario = "INSERT INTO custom_form_has_property (custom_form_id, property_id, field_order) 
+																	VALUES ('$formulario_id', '$valor','$order')";
 																	
+								
 						$result_inserir_formulario = mysqli_query($link, $inserir_formulario);	
+						
+						if (!$result_inserir_formulario) {
+                                        die("Query #8: " . mysqli_error($link));
+                                  
+                                    }
 						
 					}					
 				}
@@ -367,16 +409,24 @@
 						back();
 				}
       		}
+     		}
 		}		
 		elseif($_REQUEST['estado'] == "editar_form")
 		{
 ?>
-<?php	$custom_id = $_GET['id']; // Tem o id do formulário pretendido
+<?php	
+			$custom_form_id = $_GET['id']; // Tem o id do formulário pretendido
 			
-			$query_custom = "SELECT name FROM custom_form WHERE id = $custom_id";
-			$result_custom = mysqli_query($link, $query_custom);
-			$array_$result_custom = mysqli_fetch_array($result_custom);
-			$array_$result_custom = mysqli_fetch_array($result_custom);
+			$query_custom_form_name = "SELECT name FROM custom_form WHERE id = '$custom_form_id'";
+			$result_custom_form_name = mysql_query($query_custom_form_name);
+			
+			if (!$result_custom_form_name) {
+                                        die("Query #9: " . mysqli_error($link));
+                                  
+                                    }
+									
+			$array_custom_form_name = mysql_fetch_array($result_custom_form_name);
+
 ?>			
 			<form name="gestao-de-formularios-editar" method="POST">	
 			<fieldset>
@@ -384,7 +434,7 @@
 			<input type="hidden" name="estado" value="atualizar_form_custom"> 
 			<p>
 			<label><b>Nome do Formulário:</b></label>
-			<input type="text" name="form_name" value="<?php echo $array_$result_custom['name']; ?>">
+			<input type="text" name="form_name" value="<?php echo $array_custom_form_name['name']; ?>">
 			</p>
 			
 			<table>
@@ -410,19 +460,25 @@
 <?php
 		$query_componentes="SELECT component.name, component.id FROM component";
 		$result_componentes=mysqli_query($link, $query_componentes);
-		while($linhacomponente= mysqli_fetch_array($result_componentes)
+		while($linhacomponente= mysqli_fetch_array($result_componentes))
 		{
 
 		$query_propriedades="SELECT property.* 
 		FROM property, component
 		WHERE property.component_id=".$linhacomponente."";
 		$result_propriedades= mysqli_query($link, $query_propriedades);
+		
+		if (!$result_propriedades) {
+                                        die("Query #10: " . mysqli_error($link));
+                                  
+                                    }
+		
 		$num_rows_propriedades=mysqli_num_rows($result_propriedades);
 ?>
 		<tr>
 		<td colspan="1" rowspan="<?php echo $num_rows_propriedades?>" <?php echo $linhacomponente['name'];?></td>
 <?php
-		while($linhapropriedades = mysqli_fetch_array($result_propriedades)
+		while($linhapropriedades = mysqli_fetch_array($result_propriedades))
 		{
 ?>
 		<td> <?php echo $linhapropriedades['name'];?></td>
@@ -433,13 +489,20 @@
 <?php						
 	if($linhapropriedades['unit_type_id'] != ' ' )
 						{
-			$query_unidades2="SELECT put.name AS 'put.name'
-			FROM prop_unit_type AS put, propert AS p
-			WHERE p.unit_type_id=put.id and  p.unit_type_id=".$linhapropriedades['unit_type_id']."";
-			$resultado_unidades2 = mysqli_query($link, $query_unidades);
-			$array_unidades2 = mysqli_fetch_array($resultado_unidades);
+							$query_unidades2="SELECT put.name AS 'put.name'
+													FROM prop_unit_type AS put, propert AS p
+													WHERE p.unit_type_id=put.id and  p.unit_type_id=".$linhapropriedades['unit_type_id']."";
+													
+													
+							$resultado_unidades2 = mysqli_query($link, $query_unidades);
+							
+							if (!$resultado_unidades2) {
+                                        die("Query #11: " . mysqli_error($link));
+                                  
+                                    }
+							$array_unidades2 = mysqli_fetch_array($resultado_unidades);
 ?>								
-						<td> <?php echo $array_unit_type2['put.name']; ?> </td>
+						<td> <?php echo $array_unidades2['put.name']; ?> </td>
 <?php						
 					}
 					else
@@ -490,10 +553,18 @@
 <?php
 					}
 					$query_formulario_atualizavel="SELECT cfhp.property_id as 'cfhp.property_id', cfhp.custom_form_id AS 'cfhp.custom_form_id', p.field_order AS 'p.field_order'
-					FROM property AS p, custom_form_has_property as cfhp, custom_form as cf
-					WHERE cfhp.custom_form_id=cf.id and cfhp.property_id=p.id and p.id=".$linhapropriedades['id']."";
+								FROM property AS p, custom_form_has_property as cfhp, custom_form as cf
+								WHERE cfhp.custom_form_id=cf.id and cfhp.property_id=p.id and p.id=".$linhapropriedades['id']."";
 					$resultado_formulario_atualizavel=mysqli_query($link, $query_formulario_atualizavel);
+					
+					if (!$resultado_formulario_atualizavel) {
+                                        die("Query #12: " . mysqli_error($link));
+                                  
+                                    }
 					$linha_associativa=mysqli_fetch_array($resultado_formulario_atualizavel);
+					
+					
+					
 					if($linhapropriedades['id'] == $linha_associativa['property_id'])
 					{
 ?>						
@@ -554,14 +625,19 @@
 			else
 			{	
 				//Faço a atualização do valor do formulário
-				$update_custom_form= " UPDATE `custom_form` SET `name` = '$nome_formulario' WHERE `id` = '$custom_form_id'";
+				$update_custom_form= " UPDATE custom_form SET name = '$nome_formulario' WHERE id = '$custom_form_id'";
 											
 											
 				$resultado_update = mysqli_query($update_custom_form);
 				// Apago a coluna que foi actualizada
-				$apagar_custom_form = "DELETE FROM `custom_form_has_property` WHERE `custom_form_id` = "$custom_form_id" ";
+				$apagar_custom_form = "DELETE FROM custom_form_has_property WHERE custom_form_id = '$custom_form_id' ";
 													
 				$resultado_apagar_custom_form = mysqli_query($link, $apagar_custom_form); 
+				
+				if (!$resultado_apagar_custom_form) {
+                                        die("Query #13: " . mysqli_error($link));
+                                  
+                                    }
 				
 				//Vai percorrer o array da checkbox e verifica o indice do valor escolhido 
 				foreach($check as $chave => $valor)  //percorre o array $check sendo $chave o indice do array e $valor os dados associados a esse indice
@@ -570,22 +646,33 @@
 					$order = $_REQUEST['order_by'.$valor];
 					if(empty($order)) // Se o valor de ordenação não foi inserido então inserimos o id do formulario e a propriedade do id
 					{											
-						$update_property_has_no_order = "INSERT INTO custom_form_has_property (`custom_form_id`,`property_id`) 
-																	VALUES ("$custom_form_id", "$valor")";
+						$update_propriedade_sem_ordem = "INSERT INTO custom_form_has_property (custom_form_id,property_id) 
+																	VALUES ('$custom_form_id', '$valor')";
 																	
 																	
-						$result_update_property_has_no_order = mysqli_query($link, $update_property_has_no_order);
+						$resultado_update_propriedade_sem_ordem = mysqli_query($link, $update_propriedade_sem_ordem);
+						
+						if (!$resultado_update_propriedade_sem_ordem) {
+                                        die("Query #14: " . mysqli_error($link));
+                                  
+                                    }
 					}
 					else
 					{
-						$update_has_order = "INSERT INTO custom_form_has_property (`custom_form_id`, `property_id`, `field_order`) 
-																	VALUES ("$custom_form_id", "$valor","$order")";
+						$update_propriedade_ordem = " INSERT INTO custom_form_has_property (custom_form_id, property_id, field_order) 
+																	VALUES ('$custom_form_id', '$valor','$order'";
 																	
-						$result_$update_has_order = mysqli_query($link, $update_has_order);																	
+																	
+						$resultado_update_propriedade_ordem  = mysqli_query($link, $update_propriedade_ordem);	
+
+							if (!$result_update_cf_has_property) {
+                                        die("Query #15: " . mysqli_error($link));
+                                  
+                                    }
 					}								
 				}
 				#Se o formulário foi actualizado a sua ordem, foi actualizado sem a sua ordem  e se o resultado é apagar formulário
-				if($result_update_property_has_no_order && $result_$update_has_order && $resultado_apagar_custom_form)
+				if($resultado_update_propriedade_sem_ordem && $$resultado_update_propriedade_ordem && $resultado_apagar_custom_form)
 				{			
 					mysqli_commit($link);
 ?>
@@ -602,6 +689,5 @@
 					}	
 			}
 		}					
-	}
-}	
+	}		
 ?>
