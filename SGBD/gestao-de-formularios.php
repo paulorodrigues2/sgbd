@@ -193,6 +193,7 @@
 					
 			<tbody>
 <?php
+		}
 		$query_componentes="SELECT component.name, component.id FROM component";
 		$result_componentes=mysqli_query($link, $query_componentes);
 		while($linhacomponente= mysqli_fetch_array($result_componentes)
@@ -371,3 +372,232 @@
 		}		
 		elseif($_REQUEST['estado'] == "editar_form")
 		{
+?>
+<?php	$custom_id = $_GET['id']; // Tem o id do formulário pretendido
+			
+			$query_custom = "SELECT name FROM custom_form WHERE id = $custom_id";
+			$result_custom = mysqli_query($link, $query_custom);
+			$array_$result_custom = mysqli_fetch_array($result_custom);
+			$array_$result_custom = mysqli_fetch_array($result_custom);
+?>			
+			<form name="gestao-de-formularios-editar" method="POST">	
+			<fieldset>
+			
+			<input type="hidden" name="estado" value="atualizar_form_custom"> 
+			<p>
+			<label><b>Nome do Formulário:</b></label>
+			<input type="text" name="form_name" value="<?php echo $array_$result_custom['name']; ?>">
+			</p>
+			
+			<table>
+			<thead>
+			<tr>
+			<th>Componente</th>
+			<th>ID</th>
+			<th>propriedade</th>
+			<th>tipo de valor</th>
+			<th>nome do campo no formulario</th>
+			<th>tipo do campo no formulario</th>
+			<th>tipo de unidade</th>
+			<th>ordem do campo no formulario</th>
+			<th>tamanho do campo no formulario</th>
+			<th>obrigatorio</th>
+			<th>estado</th>
+			<th>escolher</th>
+			<th>ordem</th>
+			</tr>
+			</thead>
+					
+			<tbody>
+<?php
+		$query_componentes2="SELECT component.name, component.id FROM component";
+		$result_componentes2=mysqli_query($link, $query_componentes2);
+		while($linhacomponente2= mysqli_fetch_array($result_componentes2)
+		{
+
+		$query_propriedades2="SELECT property.* 
+		FROM property, component
+		WHERE property.component_id=".$linhacomponente2."";
+		$result_propriedades2= mysqli_query($link, $query_propriedades2);
+		$num_rows_propriedades2=mysqli_num_rows($result_propriedades2);
+?>
+		<tr>
+		<td colspan="1" rowspan="<?php echo $num_rows_propriedades?>" <?php echo $linhacomponente2['name'];?></td>
+<?php
+		while($linhapropriedades2 = mysqli_fetch_array($result_propriedades2)
+		{
+?>
+		<td> <?php echo $linhapropriedades2['name'];?></td>
+		<td> <?php echo $linhapropriedades2['value_type'];?></td>
+		<td> <?php echo $linhapropriedades2['form_field_name'];?></td>
+		<td> <?php echo $linhapropriedades2['form_field_type'];?></td>
+		<td> <?php echo $linhapropriedades2['form_field_type'];?></td>
+<?php						
+	if($linhapropriedades['unit_type_id'] != ' ' )
+						{
+			$query_unidades="SELECT put.name AS 'put.name'
+			FROM prop_unit_type AS put, propert AS p
+			WHERE p.unit_type_id=put.id and  p.unit_type_id=".$linhapropriedades['unit_type_id']."";
+			$resultado_unidades = mysqli_query($link, $query_unidades);
+			$array_unidades = mysqli_fetch_array($resultado_unidades);
+?>								
+						<td> <?php echo $array_unit_type2['put.name']; ?> </td>
+<?php						
+					}
+					else
+					{
+?>						
+						<td> "NULL"; </td>
+<?php												
+					}
+?>				
+					<td> <?php echo $linhapropriedades['form_field_order']; ?> </td>
+<?php
+					if($linhapropriedades['form_field_size'] != null)
+					{
+?>
+						<td> <?php echo $linhapropriedades['form_field_size']; ?> </td>
+<?php							
+					}
+					else
+					{
+?>
+						<td> "NULL"; </td>
+<?php						
+					}
+					
+					if($linhapropriedades['mandatory'] == 1)
+					{
+?>
+						<td> sim </td>
+<?php
+					}
+					else
+					{
+?>
+						<td> não </td>
+<?php
+					}
+					
+					if($linhapropriedades['state']== "active")
+					{
+?>						
+						<td> activo </td>					 
+<?php
+					}
+					else
+					{
+?>
+						<td> inactivo </td>
+<?php
+					}
+					$query_formulario_atualizavel="SELECT cfhp.property_id as 'cfhp.property_id', cfhp.custom_form_id AS 'cfhp.custom_form_id', p.field_order AS 'p.field_order'
+					FROM property AS p, custom_form_has_property as cfhp, custom_form as cf
+					WHERE cfhp.custom_form_id=cf.id and cfhp.property_id=p.id and p.id=".$linhapropriedades['id']."";
+					$resultado_formulario_atualizavel=mysqli_query($link, $query_formulario_atualizavel);
+					$linha_associativa=mysqli_fetch_array($resultado_formulario_atualizavel);
+					if($linhapropriedades['id'] == $linha_associativa['property_id'])
+					{
+?>						
+						<td><input type="checkbox" name="check[]" value="<?php echo $linhapropriedades['id'];?>" CHECKED></td>
+						<td><input type="text" name="order_<?php echo $linhapropriedades['id'];?>" value="<?php echo $linha_associativa['p.field_order']; ?>"></td>					
+<?php						
+					}
+					else
+					{
+?>						
+						<td><input type="checkbox" name="check[]" value="<?php echo $linhapropriedades['id'];?>"></td>
+						<td><input type="text" name="order_<?php echo $linhapropriedades['id'];?>"></td>					
+<?php							
+					}
+?>									
+					</tr>
+<?php
+				}
+				
+			}
+?>			
+			</tbody>
+			</table>
+	
+			<p>	
+			<input type="submit" value="Atualizar formulário">
+			</p>
+			</fieldset>	
+			</form>			
+
+<?php			
+		}
+		else if($_REQUEST['estado'] == "atualizar_form_custom")
+		{
+			//Get id do formulário
+			$custom_form_id = $_GET['id'];
+			//Nome do formulário
+			$nome_formulario = $_REQUEST['form_name'];
+			//Get valor do checkbox
+			$check= $_REQUEST['check'];
+			
+			if(empty($nome_formulario))
+			{
+				//Preenche o nome do formulário
+?>
+				<p>Tem de escolher o nome do formulário.</p>
+<?php			
+				back();
+			}
+				// Se o valor da checkbox 
+			elseif(is_null($check))
+			{
+?>			
+				<p>Tem de escolher pelo menos uma propriedade.</p>
+<?php	
+				back();				
+			}
+			else
+			{	
+					
+				$update_custom_form= " UPDATE `custom_form` SET `name` = '$nome_formulario' WHERE `id` = '$custom_form_id'";
+											
+											
+				$resultado_update = mysqli_query($update_custom_form);
+				
+				$apagar_custom_form = "DELETE FROM `custom_form_has_property` WHERE `custom_form_id` = "$custom_form_id" ";
+													
+				$resultado_apagar_custom_form = mysqli_query($link, $apagar_custom_form); 
+				
+				//Vai percorrer o array da checkbox e verifica o indice do valor escolhido 
+				foreach($check as $chave => $valor)  //percorre o array $check sendo $chave o indice do array e $valor os dados associados a esse indice
+				{
+					//Busca o valor do escolhido
+					$order = $_REQUEST['order_by'.$valor];
+					if(empty($order)) // Se o valor de check for vázio inserimos o id e a propriedade do id no custom_form_has_property
+					{											
+						$update_property = "INSERT INTO custom_form_has_property (`custom_form_id`,`property_id`) 
+																	VALUES ("$custom_form_id", "$valor")";
+																	
+																	
+						$result_update_cf_has_property = mysqli_query($update_cf_has_property);
+					}
+					else
+					{
+						$update_cf_has_property = sprintf(' INSERT INTO custom_form_has_property (`custom_form_id`, `property_id`, `field_order`) 
+																	VALUES ("%s", "%s","%s"); ',
+																	mysql_real_escape_string($custom_form_id),
+																	mysql_real_escape_string($valor),
+																	mysql_real_escape_string($order));
+																	
+						$result_update_cf_has_property = mysql_query($update_cf_has_property);																	
+					}								
+				}
+				
+				if($result_update_cf_name && $result_update_cf_has_property && $result_clear_cf_has_property)
+				{					
+?>
+					<p> Os dados do formulário customizado foram atualizados com sucesso.</p>
+					<p>Clique em <a href="gestao-de-formularios">Continuar</a> para avancar.</p>
+<?php										
+				}	
+			}					
+		}
+	}	
+?>
