@@ -48,17 +48,14 @@
 ?>
 						<tr>
 						 <td> <?php echo $linha['id']; ?> </td>
-						<td><?php echo '<a href = "gestao-de-unidades?estado=introducao&unidade='. $linha["id"].'">'.$linha['name'].'</a>';?></td>
+						 <td><?php echo $linha['name'];?></td>
 						</tr>
 <?php 
 					} 
 ?>				</tbody>
 				</table>
 <?php				
-			}
-		}				
-		elseif($_GET['estado'] == "introducao")
-		{
+			}				
 			
 ?>		
 
@@ -87,7 +84,7 @@
 			
 <?php           
 		}
-		else if($_REQUEST['estado'] == "inserir") // Verifica o estado se é igual a inserir.
+		if($_REQUEST['estado'] == "inserir") // Verifica o estado se é igual a inserir.
 		{
 ?>
 			<h3><b>Gestao de unidades - Insercao</b></h3>

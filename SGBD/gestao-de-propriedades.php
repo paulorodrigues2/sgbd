@@ -20,7 +20,7 @@
 			$tipovalor = $_POST["tipovalor"];
 			$componente = $_POST["componente"];
 			$tipocampo = $_POST["tipodocampo"];
-			$nomecampo = $_POST["nomecampo"];
+			//$nomecampo = $_POST["nomecampo"];
 			$tipounidade = $_POST["tipounidade"];
 			$ordemcampo = $_POST["ordemcampo"];
 			$obrigatorio = $_POST["obrigatório"];
