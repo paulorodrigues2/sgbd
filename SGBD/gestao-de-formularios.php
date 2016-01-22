@@ -38,7 +38,6 @@ if (!$resultadoformulario) {
                                     }				
 ?>				
 				<table class="mytable">
-				<thead>
 				<tr>
 				<th>formulario</th>
 				<th>id</th>
@@ -53,15 +52,12 @@ if (!$resultadoformulario) {
 				<th>estado</th>
 				<th>acao</th>
 				</tr>
-				</thead>
-				
-				<tbody>
 	
 <?php	
 				while($linha = mysqli_fetch_array($resultadoformulario))
 				{
 					//Seleciona id, nome, tipo de valor, nome do formulário e o tipo de formulário.
-					$queryproper = "SELECT property.*
+					$queryproper = "SELECT p.*
 									FROM property AS p, custom_form_has_property AS cfhp
 									WHERE p.id = cfhp.property_id
 									AND cfhp.custom_form_id = ".$linha['cf.id']."
@@ -72,7 +68,7 @@ if (!$resultadoformulario) {
                                         die("Query #2: " . mysqli_error($link));
                                   
                                     }
-					$num_rows_property = mysqli_num_rows($rresultproper);
+					$num_rows_property = mysqli_num_rows($resultproper);
 
 ?>					
 					
@@ -80,29 +76,27 @@ if (!$resultadoformulario) {
 					
 					<td colspan = "1" rowspan = "<?php echo $num_rows_property; ?>">
 					
-					<?php echo '<a href="gestao-de-formularios?estado=editar_form&id='.$linha['c.id'].'">
-					
-					'.$linha['cf.name'].' </a>'; ?>					
+					<?php echo '<a href="gestao-de-formularios?estado=editar_form&id='.$linha['c.id'].'">'.$linha['cf.name'].' </a>'; ?>					
 					</td>					
 <?php					
-					while($linhapropriedade = mysqli_fetch_array($result_property))
+					while($linhapropriedade = mysqli_fetch_array($resultproper))
 					{
 						#Definimos o id da propriedade, nome da propriedade, tipo de valor, nome do formulário e tipo de formulário;
 ?>							
 
-						<td><?php echo $linhapropriedade['id']; ?></td>
-						<td><?php echo $linhapropriedade['name']; ?></td>
-						<td><?php echo $linhapropriedade['value_type']; ?></td>
-						<td><?php echo $linhapropriedade['form_field_name']; ?></td>
-						<td><?php echo $linhapropriedade['form_field_type']; ?></td>
+						<td><?php echo $linhapropriedade['p.id']; ?></td>
+						<td><?php echo $linhapropriedade['p.name']; ?></td>
+						<td><?php echo $linhapropriedade['p.value_type']; ?></td>
+						<td><?php echo $linhapropriedade['p.form_field_name']; ?></td>
+						<td><?php echo $linhapropriedade['p.form_field_type']; ?></td>
 <?php					
 					
 						if($linhapropriedade['unit_type_id'] != ' ' )
 						{
 							$queryunidade = "SELECT put.name AS 'put.name'
 												FROM prop_unit_type AS put, property AS p
-												WHERE p.unit_type_id=put.id and  p.unit_type_id=".$linhapropriedade['unit_type_id']."";
-							$result_unit_type = mysqli_query($link, $query_unit_type);
+												WHERE p.unit_type_id=put.id and  p.unit_type_id='".$linhapropriedade['p.unit_type_id']."'";
+							$result_unit_type = mysqli_query($link, $queryunidade);
 							
 							if (!$result_unit_type ) {
                                         die("Query #3: " . mysqli_error($link));
@@ -123,12 +117,12 @@ if (!$resultadoformulario) {
 						} #Ordem do formulário 
 ?>				
 								
-						<td> <?php echo $linhapropriedade['form_field_order']; ?> </td>
+						<td> <?php echo $linhapropriedade['p.form_field_order']; ?> </td>
 <?php						
-						if($linhapropriedade['form_field_size'] != null)
+						if($linhapropriedade['p.form_field_size'] != null)
 						{
 ?>
-							<td> <?php echo $linhapropriedade['form_field_size']; ?> </td>
+							<td> <?php echo $linhapropriedade['p.form_field_size']; ?> </td>
 <?php							
 						}
 						else
@@ -138,7 +132,7 @@ if (!$resultadoformulario) {
 <?php						
 						}	
 						#Caso for obrigatorio 
-						if($linhapropriedade['mandatory'] == 1)
+						if($linhapropriedade['p.mandatory'] == 1)
 						{
 ?>
 							<td> sim </td>
@@ -151,7 +145,7 @@ if (!$resultadoformulario) {
 <?php
 						}
 						
-						if($linhapropriedade['state']== "active")
+						if($linhapropriedade['p.state']== "active")
 						{
 ?>						
 							<td> activo </td>
@@ -318,7 +312,7 @@ if (!$resultadoformulario) {
 			}
 		}
 ?>			
-			</tbody>
+			
 			</table>
 	
 			<input type="submit" value="Criar formulario">
@@ -418,14 +412,14 @@ if (!$resultadoformulario) {
 			$custom_form_id = $_GET['id']; // Tem o id do formulário pretendido
 			
 			$query_custom_form_name = "SELECT name FROM custom_form WHERE id = '$custom_form_id'";
-			$result_custom_form_name = mysql_query($query_custom_form_name);
+			$result_custom_form_name = mysqli_query($link, $query_custom_form_name);
 			
 			if (!$result_custom_form_name) {
                                         die("Query #9: " . mysqli_error($link));
                                   
                                     }
 									
-			$array_custom_form_name = mysql_fetch_array($result_custom_form_name);
+			$array_custom_form_name = mysqli_fetch_array($result_custom_form_name);
 
 ?>			
 			<form name="gestao-de-formularios-editar" method="POST">	
@@ -465,7 +459,7 @@ if (!$resultadoformulario) {
 
 		$query_propriedades="SELECT property.* 
 		FROM property, component
-		WHERE property.component_id=".$linhacomponente."";
+		WHERE property.component_id='.$linhacomponente.'";
 		$result_propriedades= mysqli_query($link, $query_propriedades);
 		
 		if (!$result_propriedades) {
@@ -597,7 +591,7 @@ if (!$resultadoformulario) {
 
 <?php			
 		}
-		else if($_REQUEST['estado'] == "atualizar_form_custom")
+		elseif($_REQUEST['estado'] == "atualizar_form_custom")
 		{
 			//Get id do formulário
 			$custom_form_id = $_GET['id'];
